@@ -1,0 +1,66 @@
+# =========================================================
+# Configuração do benchmark - XTresser / Benchmark
+# =========================================================
+
+# Diretório onde os arquivos temporários de I/O serão criados.
+# Use um disco/partição real que representa o storage do servidor.
+work_dir: "/tmp/bench_io"
+
+# Duração total do teste, em minutos.
+# Ex: 480 = 8 horas simulando um dia útil comprimido, ou rode 1440 para 24h reais.
+duration_minutes: 1440
+
+# Intervalo de amostragem das métricas (segundos)
+interval_seconds: 20
+
+# Perfil padrão (fora dos horários de pico definidos abaixo)
+default:
+  label: "normal"
+  cpu_load_percent: 20     # % de uso de CPU alvo (stress-ng --cpu-load)
+  cpu_workers: 2           # nº de threads de CPU
+  io_read_mb: 50           # MB lidos por ciclo (fio)
+  io_write_mb: 20          # MB escritos por ciclo (fio)
+  io_workers: 2            # jobs paralelos de I/O
+  mem_workers: 1           # workers de estresse de memória
+  mem_size_mb: 256         # memória alocada por worker
+
+# Janelas de pico. O horário usa o relógio real da máquina (HH:MM, 24h).
+peaks:
+  - label: "pico_manha"
+    start: "08:00"
+    end: "09:30"
+    cpu_load_percent: 85
+    cpu_workers: 8
+    io_read_mb: 400
+    io_write_mb: 150
+    io_workers: 6
+    mem_workers: 4
+    mem_size_mb: 512
+
+  - label: "pico_meiodia"
+    start: "12:00"
+    end: "13:00"
+    cpu_load_percent: 60
+    cpu_workers: 4
+    io_read_mb: 200
+    io_write_mb: 80
+    io_workers: 4
+    mem_workers: 2
+    mem_size_mb: 384
+
+  - label: "pico_fimdeturno"
+    start: "16:00"
+    end: "18:00"
+    cpu_load_percent: 95
+    cpu_workers: 12
+    io_read_mb: 600
+    io_write_mb: 300
+    io_workers: 8
+    mem_workers: 6
+    mem_size_mb: 768
+
+# Limites de alerta - se ultrapassados, o script marca "ALERTA" no relatório
+thresholds:
+  cpu_percent_critical: 95
+  mem_percent_critical: 90
+  disk_latency_ms_critical: 60
